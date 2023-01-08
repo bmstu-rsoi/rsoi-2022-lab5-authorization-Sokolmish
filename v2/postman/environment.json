@@ -4,7 +4,7 @@
   "values": [
     {
       "key": "serviceUrl",
-      "value": "",
+      "value": "51.250.78.195",
       "enabled": true
     },
     {
@@ -14,12 +14,12 @@
     },
     {
       "key": "username",
-      "value": "",
+      "value": "web_macaque",
       "enabled": true
     },
     {
       "key": "password",
-      "value": "",
+      "value": "qwerty",
       "enabled": true
     },
     {
