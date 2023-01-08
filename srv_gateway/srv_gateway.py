@@ -104,6 +104,13 @@ def home():
 
 @app.route('/api/v1/hotels', methods=['GET'])
 def hotelsRoute():
+    data = get_token(flask.request)
+    if data is None:
+        return flask.Response(
+            ErrorResponse(msg='Get authorized please').toJSON(),
+            status.HTTP_401_UNAUTHORIZED,
+        )
+
     page = int(flask.request.args.get('page', '1'))
     size = int(flask.request.args.get('size', '100'))
     r = requests.get(
