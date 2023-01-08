@@ -4,7 +4,8 @@ RUN pip install \
     flask \
     flask_api \
     psycopg2 \
-    requests
+    requests \
+    pyjwt[crypto]
 
 COPY srv_reservation/ /app/
 COPY common/ /app/common/

@@ -10,3 +10,5 @@ PAYMENT_ADDR = f'http://spread-payment:{PAYMENT_PORT}'
 RESERVATION_ADDR = f'http://spread-reservation:{RESERVATION_PORT}'
 
 DATABASE_ADDR = 'psql-smth-postgresql'
+
+JWT_WELLKNOWN = 'https://dev-inwht6vkld1mybeu.us.auth0.com/.well-known/jwks.json'

@@ -9,27 +9,27 @@
     },
     {
       "key": "identityProviderUrl",
-      "value": "",
+      "value": "https://dev-inwht6vkld1mybeu.us.auth0.com",
       "enabled": true
     },
     {
       "key": "username",
-      "value": "web_macaque",
+      "value": "web_macaque@test.com",
       "enabled": true
     },
     {
       "key": "password",
-      "value": "qwerty",
+      "value": "web_macaque123",
       "enabled": true
     },
     {
       "key": "clientId",
-      "value": "",
+      "value": "tFsLkIxWCeT9z3LUnJXSvjv5icX9DkBE",
       "enabled": true
     },
     {
       "key": "clientSecret",
-      "value": "",
+      "value": "1lpSwtFq7_FHD9XVuwDLo62PP-WTYxbUCRLDaIv6G94qgIGuNPCQQGDqwKAYveIk",
       "enabled": true
     }
   ],

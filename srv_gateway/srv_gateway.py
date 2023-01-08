@@ -2,6 +2,8 @@ import sys
 import flask
 from flask_api import status
 
+import jwt
+
 import urllib.parse
 import json
 import requests
@@ -11,6 +13,39 @@ import common.services as services
 from common.api_messages import *
 
 
+jwks_client = jwt.PyJWKClient(services.JWT_WELLKNOWN)
+
+
+def _token_parse(token: str):
+    signing_key = jwks_client.get_signing_key_from_jwt(token)
+    data = jwt.decode(
+        token,
+        signing_key.key,
+        algorithms=["RS256"],
+        audience="https://auth_xxx",
+        options={"verify_exp": True},
+    )
+    print(data)
+    print(data, file=sys.stderr)
+    # return data.get('ok', False)
+    return data
+
+
+def get_token(req: flask.Request):
+    headers = flask.request.headers
+    bearer = headers.get('Authorization')
+    try:
+        return _token_parse(bearer.split()[1])
+    except:
+        return None
+
+def auth_name(req: flask.Request):
+    data = get_token(req)
+    if data is None:
+        return None
+    return data.get('name')
+
+
 app = flask.Flask(__name__)
 
 
@@ -18,7 +53,8 @@ app = flask.Flask(__name__)
 def hotelsRoute():
     page = int(flask.request.args.get('page', '1'))
     size = int(flask.request.args.get('size', '100'))
-    r = requests.get(f'{services.RESERVATION_ADDR}/all_hotels?page={page}&size={size}')
+    r = requests.get(
+        f'{services.RESERVATION_ADDR}/all_hotels?page={page}&size={size}')
     if r.status_code != status.HTTP_200_OK:
         return flask.Response('Smth went wrong', status.HTTP_400_BAD_REQUEST)
     resp = flask.Response(r.text)
@@ -40,7 +76,15 @@ def get_user_reservations(name: str):
 
 @app.route('/api/v1/me', methods=['GET'])
 def meRoute():
-    name = flask.request.headers.get('X-User-Name')
+    name = auth_name(flask.request)
+    if name is None:
+        return flask.Response(
+            ErrorResponse(msg='Get authorized please').toJSON(),
+            status.HTTP_401_UNAUTHORIZED,
+        )
+
+    # name = flask.request.headers.get('X-User-Name')
+
     reservations = get_user_reservations(name)
     loyalty = requests.get(
         f'{services.LOYALTY_ADDR}/status?username={urllib.parse.quote(name)}'
@@ -58,7 +102,14 @@ def meRoute():
 
 @app.route('/api/v1/reservations', methods=['GET', 'POST'])
 def reservationsRoute():
-    name = flask.request.headers.get('X-User-Name')
+    name = auth_name(flask.request)
+    if name is None:
+        return flask.Response(
+            ErrorResponse(msg='Get authorized please').toJSON(),
+            status.HTTP_401_UNAUTHORIZED,
+        )
+
+    # name = flask.request.headers.get('X-User-Name')
 
     if flask.request.method == 'GET':
         resp = flask.Response(arrToJson(get_user_reservations(name)))
@@ -133,7 +184,14 @@ def reservationsRoute():
 
 @ app.route('/api/v1/reservations/<uid>', methods=['GET', 'DELETE'])
 def specReservationsRoute(uid):
-    name = flask.request.headers.get('X-User-Name')
+    name = auth_name(flask.request)
+    if name is None:
+        return flask.Response(
+            ErrorResponse(msg='Get authorized please').toJSON(),
+            status.HTTP_401_UNAUTHORIZED,
+        )
+    
+    # name = flask.request.headers.get('X-User-Name')
 
     if flask.request.method == 'GET':
         r1 = requests.get(
@@ -177,7 +235,15 @@ def specReservationsRoute(uid):
 
 @ app.route('/api/v1/loyalty', methods=['GET'])
 def loyaltyRoute():
-    name = flask.request.headers.get('X-User-Name')
+    name = auth_name(flask.request)
+    if name is None:
+        return flask.Response(
+            ErrorResponse(msg='Get authorized please').toJSON(),
+            status.HTTP_401_UNAUTHORIZED,
+        )
+
+    # name = flask.request.headers.get('X-User-Name')
+
     res = requests.get(
         f'{services.LOYALTY_ADDR}/status?username={urllib.parse.quote(name)}'
     ).text
