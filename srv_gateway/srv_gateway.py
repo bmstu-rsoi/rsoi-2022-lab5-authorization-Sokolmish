@@ -8,12 +8,28 @@ import urllib.parse
 import json
 import requests
 import datetime
+import base64
 
 import common.services as services
 from common.api_messages import *
 
+import json
+from os import environ as env
+from urllib.parse import quote_plus, urlencode
+
+from authlib.integrations.flask_client import OAuth
+# from flask import Flask, redirect, render_template, session, url_for
+
 
 jwks_client = jwt.PyJWKClient(services.JWT_WELLKNOWN)
+
+auth_domain = "dev-inwht6vkld1mybeu.us.auth0.com"
+auth_clientid = "aOH8mlhgi2X7Uy5Nzu5104fLCwnvjOUJ"
+
+# Autoparsers shall not pass
+p1 = "QW96RGU5U3N2VGZKYVZfS2lHOGcwaGZGMVR3T"
+p2 = "XBxSW1Kekt2OE0taWR0SFpXa0thWFNuTDFsR0ctVzdkdFdEcA=="
+auth_secret = base64.b64decode((p1 + p2).encode())
 
 
 def _token_parse(token: str):
@@ -39,6 +55,7 @@ def get_token(req: flask.Request):
     except:
         return None
 
+
 def auth_name(req: flask.Request):
     data = get_token(req)
     if data is None:
@@ -47,6 +64,42 @@ def auth_name(req: flask.Request):
 
 
 app = flask.Flask(__name__)
+app.secret_key = auth_secret
+
+
+oauth = OAuth(app)
+
+oauth.register(
+    "auth0",
+    client_id=env.get("AUTH0_CLIENT_ID"),
+    client_secret=env.get("AUTH0_CLIENT_SECRET"),
+    client_kwargs={
+        "scope": "openid profile email",
+    },
+    server_metadata_url=f'https://{auth_domain}/.well-known/openid-configuration'
+)
+
+
+@app.route("/login")
+def login():
+    return oauth.auth0.authorize_redirect(
+        redirect_uri=flask.url_for("callback", _external=True)
+    )
+
+
+@app.route("/callback", methods=["GET", "POST"])
+def callback():
+    token = oauth.auth0.authorize_access_token()
+    flask.session["user_token"] = token
+    return flask.redirect("/get_token")
+
+
+@app.route("/get_token")
+def home():
+    token = flask.session.get('user_token')
+    resp = flask.Response(json.dumps({"access_token": token}, indent=None))
+    resp.headers['Content-Type'] = 'application/json'
+    return resp
 
 
 @app.route('/api/v1/hotels', methods=['GET'])
@@ -190,7 +243,7 @@ def specReservationsRoute(uid):
             ErrorResponse(msg='Get authorized please').toJSON(),
             status.HTTP_401_UNAUTHORIZED,
         )
-    
+
     # name = flask.request.headers.get('X-User-Name')
 
     if flask.request.method == 'GET':

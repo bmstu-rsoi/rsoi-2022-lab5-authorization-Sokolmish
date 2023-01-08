@@ -5,7 +5,9 @@ RUN pip install \
     flask_api \
     psycopg2 \
     requests \
-    pyjwt[crypto]
+    pyjwt[crypto] \
+    python-dotenv \
+    authlib
 
 COPY srv_gateway/ /app/
 COPY common/ /app/common/
