@@ -34,46 +34,15 @@
 							"type": "noauth"
 						},
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "scope",
-									"value": "openid",
-									"type": "text"
-								},
-								{
-									"key": "grant_type",
-									"value": "password",
-									"type": "text"
-								},
-								{
-									"key": "username",
-									"value": "{{username}}",
-									"type": "text"
-								},
-								{
-									"key": "password",
-									"value": "{{password}}",
-									"type": "text"
-								},
-								{
-									"key": "clientId",
-									"value": "{{clientId}}",
-									"type": "text"
-								},
-								{
-									"key": "clientSecret",
-									"value": "{{clientSecret}}",
-									"type": "text"
-								},
-								{
-									"key": "audience",
-									"value": "https://auth_xxx",
-									"type": "text"
-								}
-							]
+							"mode": "raw",
+							"raw": "{\"client_id\":\"aOH8mlhgi2X7Uy5Nzu5104fLCwnvjOUJ\",\"client_secret\":\"AozDe9SsvTfJaV_KiG8g0hfF1TwMpqImJzKv8M-idtHZWkKaXSnL1lGG-W7dtWDp\",\"audience\":\"https://auth_xxx\",\"grant_type\":\"password\",\"username\":\"web_macaque@test.com\",\"password\":\"web_macaque123\",\"scope\":\"openid\"}"
 						},
 						"url": {
 							"raw": "{{identityProviderUrl}}/oauth/token",
