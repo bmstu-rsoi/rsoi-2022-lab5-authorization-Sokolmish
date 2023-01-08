@@ -60,7 +60,7 @@ def auth_name(req: flask.Request):
     data = get_token(req)
     if data is None:
         return None
-    return data.get('name')
+    return data.get('https://example.com/name')
 
 
 app = flask.Flask(__name__)

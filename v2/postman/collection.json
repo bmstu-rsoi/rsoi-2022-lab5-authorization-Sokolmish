@@ -36,8 +36,44 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\"client_id\":\"OmUQHCDvgmiVyZPKDob0RvWQkwpsmFJU\",\"client_secret\":\"B6-x53KYcaioMZxQ3JeUkys658gT_a_ciTFHKD1uHPmC5-97T0V5y_1EEu-6VnOe\",\"audience\":\"https://auth_xxx\",\"grant_type\":\"client_credentials\"}"
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "scope",
+									"value": "openid",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{username}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{password}}",
+									"type": "text"
+								},
+								{
+									"key": "clientId",
+									"value": "{{clientId}}",
+									"type": "text"
+								},
+								{
+									"key": "clientSecret",
+									"value": "{{clientSecret}}",
+									"type": "text"
+								},
+								{
+									"key": "audience",
+									"value": "https://auth_xxx",
+									"type": "text"
+								}
+							]
 						},
 						"url": {
 							"raw": "{{identityProviderUrl}}/oauth/token",
